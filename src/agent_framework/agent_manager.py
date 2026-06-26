@@ -2,7 +2,7 @@
 Agent Manager for coordinating and routing tasks to appropriate agents
 """
 
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type, Any
 from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio

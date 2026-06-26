@@ -3,10 +3,8 @@ Agent Framework Package
 """
 
 from .base_agent import BaseAgent, AgentType, AgentStatus, AgentResult
+from .research_agent import ResearchAgent, CodingAgent, PlanningAgent
 from .agent_manager import AgentManager
-from .research_agent import ResearchAgent
-from .coding_agent import CodingAgent
-from .planning_agent import PlanningAgent
 
 __all__ = [
     "BaseAgent",
