@@ -3,7 +3,7 @@ Agent Manager for coordinating and routing tasks to appropriate agents
 """
 
 from typing import Dict, List, Optional, Type, Any
-from .base_agent import BaseAgent, AgentType, AgentResult
+from .base_agent import BaseAgent, AgentType, AgentStatus, AgentResult
 import logging
 import asyncio
 
@@ -40,7 +40,7 @@ class AgentManager:
     def get_available_agents(self, agent_type: AgentType) -> List[BaseAgent]:
         """Get available agents of a specific type"""
         agents = self.agents.get(agent_type, [])
-        return [agent for agent in agents if agent.get_status() == "idle"]
+        return [agent for agent in agents if agent.get_status() == AgentStatus.IDLE]
 
     async def route_task(self, agent_type: AgentType, input_data: dict) -> AgentResult:
         """
