@@ -6,11 +6,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="ai-assistant",
     version="0.1.0",
-    author="AI Assistant Team",
+    author="LBOS",
     description="A state-of-the-art AI assistant with agent framework and multimodal capabilities",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/ai-assistant",
+    url="https://github.com/coolboy17289/v4",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     classifiers=[
