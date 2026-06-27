@@ -6,8 +6,8 @@ from typing import Dict, Any
 from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio
-from memory_manager.memory_manager import MemoryManager
-from memory_manager.memory_types import MemoryType, MemoryItem
+from src.memory_manager.memory_manager import MemoryManager
+from src.memory_manager.memory_types import MemoryType, MemoryItem
 
 logger = logging.getLogger(__name__)
 
