@@ -201,6 +201,7 @@ async def chat_endpoint(message: ChatMessage):
             importance=0.5,
             metadata={"message_type": "assistant_message", "session_id": message.session_id}
         )
+        logger.info(f"Assistant memory item type: {type(assistant_memory_item)}")
         memory_manager.add_memory(assistant_memory_item)
 
         return ChatResponse(
