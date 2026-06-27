@@ -1,19 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import { MessageComponent } from '@/components/MessageComponent';
+import { ChatInput } from '@/components/ChatInput';
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Array<{
+    id: string;
+    text: string;
+    sender: 'user' | 'bot';
+    timestamp: Date;
+  }>>([]);
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const sendMessage = async () => {
-    if (input.trim() === '') return;
+  const sendMessage = async (text: string) => {
+    if (text.trim() === '') return;
     setLoading(true);
-    const userMessage: Message = {
+    const userMessage = {
       id: Date.now().toString(),
-      text: input,
-      sender: 'user'
+      text: text,
+      sender: 'user',
+      timestamp: new Date(),
     };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
@@ -25,7 +32,7 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: userMessage.text,
+          message: text,
           session_id: 'default', // In a real app, you would manage sessions
           context: {},
         }),
@@ -35,19 +42,21 @@ export default function Home() {
         throw new Error('Network response was not ok');
       }
 
-      const data: ChatResponse = await response.json();
-      const botMessage: Message = {
+      const data: any = await response.json();
+      const botMessage = {
         id: Date.now().toString() + 'b',
         text: data.response,
-        sender: 'bot'
+        sender: 'bot',
+        timestamp: new Date(),
       };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error:', error);
-      const botMessage: Message = {
+      const botMessage = {
         id: Date.now().toString() + 'b',
         text: 'Sorry, something went wrong. Please try again.',
-        sender: 'bot'
+        sender: 'bot',
+        timestamp: new Date(),
       };
       setMessages(prev => [...prev, botMessage]);
     } finally {
@@ -65,25 +74,19 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold text-gray-800">AI Assistant</h1>
-          <p className="mt-Name="mt-1 text-sm text-gray-500">Chat with your AI assistant</p>
-        </div>
-      </header>
-      <main className="flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto">
-        <div className="text-sm text-gray-500">Chat with your AI assistant</p>
+          <p className="mt-2 text-sm text-gray-500">Chat with your AI assistant</p>
         </div>
       </header>
       <main className="flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto">
         <div className="space-y-4">
           {messages.map((message) => (
-            <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                message.sender === 'user'
-                  ? 'bg-blue-500 text-white ml-4'
-                  : 'bg-gray-200 text-gray-800 mr-4'
-              }`}>
-                <p className="whitespace-pre-wrap">{message.text}</p>
-              </div>
-            </div>
+            <MessageComponent
+              key={message.id}
+              id={message.id}
+              text={message.text}
+              sender={message.sender}
+              timestamp={message.timestamp}
+            />
           ))}
           {loading && (
             <div className="flex justify-start">
@@ -96,43 +99,10 @@ export default function Home() {
       <footer className="bg-white border-t">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex gap-3">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 min-h-[60px] rounded-lg border border-gray-300 bg-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              disabled={loading}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={loading || input.trim() === ''}
-              className={`px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center`}
-            >
-              {loading ? 'Sending...' : 'Send'}
-            </button>
+            <ChatInput onSend={sendMessage} />
           </div>
         </div>
       </footer>
     </div>
   );
-}
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'bot';
-}
-
-interface ChatResponse {
-  response: string;
-  session_id: string;
-  confidence: number;
-  sources: any[];
-  metadata: any;
 }
