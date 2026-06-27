@@ -1,4 +1,4 @@
-import React from 'react';
+'use client';
 
 interface AvatarProps {
   name: string;
@@ -10,7 +10,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size = 40, color = '#4f46e
   // Get initials from name
   const initials = name
     .split(' ')
-    .map(part => part[0])
+    .map((part) => part[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
