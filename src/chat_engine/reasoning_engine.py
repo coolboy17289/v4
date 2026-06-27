@@ -73,7 +73,7 @@ class ReasoningEngine:
         """
 
         decomposition_result = await self.tool_orchestrator.use_tool(
-            ToolType.REASONING,  # Using reasoning tool for meta-reasoning
+            ToolType.RESEARCH,  # Using reasoning tool for meta-reasoning
             {
                 "task": decomposition_prompt,
                 "context": context
@@ -107,7 +107,7 @@ class ReasoningEngine:
             """
 
             step_result = await self.tool_orchestrator.use_tool(
-                ToolType.REASONING,
+                ToolType.RESEARCH,
                 {
                     "task": step_prompt,
                     "context": accumulated_context
@@ -137,7 +137,7 @@ class ReasoningEngine:
         """
 
         final_result = await self.tool_orchestrator.use_tool(
-            ToolType.REASONING,
+            ToolType.RESEARCH,
             {
                 "task": synthesis_prompt,
                 "context": accumulated_context
@@ -171,7 +171,7 @@ class ReasoningEngine:
         """
 
         approaches_result = await self.tool_orchestrator.use_tool(
-            ToolType.REASONING,
+            ToolType.RESEARCH,
             {
                 "task": approaches_prompt,
                 "context": context
@@ -234,7 +234,7 @@ class ReasoningEngine:
                 """
 
                 reflection_result = await self.tool_orchestrator.use_tool(
-                    ToolType.REASONING,
+                    ToolType.RESEARCH,
                     {
                         "task": reflection_prompt,
                         "context": {
@@ -289,7 +289,7 @@ class ReasoningEngine:
             """
 
             thought_result = await self.tool_orchestrator.use_tool(
-                ToolType.REASONING,
+                ToolType.RESEARCH,
                 {
                     "task": thought_prompt,
                     "context": context
@@ -382,7 +382,7 @@ class ReasoningEngine:
         self.logger.info(f"Performing direct reasoning on: {query}")
 
         result = await self.tool_orchestrator.use_tool(
-            ToolType.REASONING,
+            ToolType.RESEARCH,
             {
                 "task": query,
                 "context": context

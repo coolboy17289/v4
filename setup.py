@@ -4,9 +4,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="ai-assistant",
+    name="LBOS-Ai",
     version="0.1.0",
-    author="LBOS",
+    author="Lihan Badenhorst",
     description="A state-of-the-art AI assistant with agent framework and multimodal capabilities",
     long_description=long_description,
     long_description_content_type="text/markdown",
