@@ -7,7 +7,7 @@ from typing import Dict, List, Any, Optional
 from enum import Enum
 import json
 
-from .tool_orchestrator import ToolOrchestrator
+from .tool_orchestrator import ToolOrchestrator, ToolType
 from .conversation_manager import ConversationManager
 
 logger = logging.getLogger(__name__)
