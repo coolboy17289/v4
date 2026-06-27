@@ -3,8 +3,16 @@ Agent Framework Package
 """
 
 from .base_agent import BaseAgent, AgentType, AgentStatus, AgentResult
-from .research_agent import ResearchAgent, CodingAgent, PlanningAgent
 from .agent_manager import AgentManager
+from .research_agent import ResearchAgent
+from .coding_agent import CodingAgent
+from .planning_agent import PlanningAgent
+from .file_agent import FileAgent
+from .browser_agent import BrowserAgent
+from .vision_agent import VisionAgent
+from .memory_agent import MemoryAgent
+from .math_agent import MathAgent
+from .automation_agent import AutomationAgent
 
 __all__ = [
     "BaseAgent",
@@ -14,5 +22,11 @@ __all__ = [
     "AgentManager",
     "ResearchAgent",
     "CodingAgent",
-    "PlanningAgent"
+    "PlanningAgent",
+    "FileAgent",
+    "BrowserAgent",
+    "VisionAgent",
+    "MemoryAgent",
+    "MathAgent",
+    "AutomationAgent"
 ]
