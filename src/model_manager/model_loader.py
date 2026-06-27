@@ -4,9 +4,16 @@ Model Loader for loading and managing AI models
 
 import logging
 import os
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, Union
 import torch
-from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM, pipeline, BitsAndBytesConfig
+
+try:
+    from peft import PeftModel
+    PEFT_AVAILABLE = True
+except ImportError:
+    PEFT_AVAILABLE = False
+    PeftModel = None
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +32,9 @@ class ModelLoader:
 
     def load_model(self, model_name: str, model_type: str = "auto",
                    use_auth_token: Optional[str] = None,
+                   load_in_8bit: bool = False,
+                   load_in_4bit: bool = False,
+                   adapter_name_or_path: Optional[str] = None,
                    **kwargs) -> Any:
         """
         Load a model from Hugging Face or local cache
@@ -33,25 +43,45 @@ class ModelLoader:
             model_name: Name or path of the model
             model_type: Type of model ('auto', 'causal_lm', 'seq2seq', etc.)
             use_auth_token: Hugging Face auth token if needed
+            load_in_8bit: Whether to load the model in 8-bit mode
+            load_in_4bit: Whether to load the model in 4-bit mode
+            adapter_name_or_path: Path to LoRA adapter (if any)
             **kwargs: Additional arguments for model loading
 
         Returns:
             Loaded model object
         """
-        cache_key = f"{model_name}_{model_type}"
+        cache_key = f"{model_name}_{model_type}_{load_in_8bit}_{load_in_4bit}_{adapter_name_or_path}"
 
         if cache_key in self.loaded_models:
             logger.info(f"Returning cached model: {cache_key}")
             return self.loaded_models[cache_key]
 
         try:
-            logger.info(f"Loading model: {model_name} (type: {model_type})")
+            logger.info(f"Loading model: {model_name} (type: {model_type}, 8-bit: {load_in_8bit}, 4-bit: {load_in_4bit})")
+
+            # Configure quantization if requested
+            quantization_config = None
+            if load_in_8bit:
+                quantization_config = BitsAndBytesConfig(
+                    load_in_8bit=True,
+                    llm_int8_threshold=6.0,
+                    llm_int8_has_fp16_weight=False,
+                )
+            elif load_in_4bit:
+                quantization_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4",
+                )
 
             if model_type == "causal_lm" or (model_type == "auto" and "gpt" in model_name.lower()):
                 model = AutoModelForCausalLM.from_pretrained(
                     model_name,
                     cache_dir=self.cache_dir,
                     token=use_auth_token,
+                    quantization_config=quantization_config,
                     **kwargs
                 )
             elif model_type == "seq2seq":
@@ -60,6 +90,7 @@ class ModelLoader:
                     model_name,
                     cache_dir=self.cache_dir,
                     token=use_auth_token,
+                    quantization_config=quantization_config,
                     **kwargs
                 )
             else:
@@ -67,8 +98,14 @@ class ModelLoader:
                     model_name,
                     cache_dir=self.cache_dir,
                     token=use_auth_token,
+                    quantization_config=quantization_config,
                     **kwargs
                 )
+
+            # Load LoRA adapter if provided
+            if adapter_name_or_path and PEFT_AVAILABLE:
+                model = PeftModel.from_pretrained(model, adapter_name_or_path)
+                logger.info(f"Loaded LoRA adapter from {adapter_name_or_path}")
 
             self.loaded_models[cache_key] = model
             return model
