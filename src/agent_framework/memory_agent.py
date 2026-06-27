@@ -6,13 +6,8 @@ from typing import Dict, Any
 from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio
-import sys
-import os
-
-# Import the memory manager from the memory_manager module
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from memory_manager.memory_manager import MemoryManager
-from memory_manager.memory_types import MemoryType
+from ..memory_manager.memory_manager import MemoryManager
+from ..memory_manager.memory_types import MemoryType
 
 logger = logging.getLogger(__name__)
 
@@ -73,8 +68,8 @@ class MemoryAgent(BaseAgent):
                         confidence=0.0
                     )
 
-                # Create appropriate memory item (simplified)
-                from memory_manager.memory_types import MemoryItem
+                # Create a memory item based on type
+                from ..memory_manager.memory_types import MemoryItem
                 item = MemoryItem(
                     content=content,
                     memory_type=memory_type,
@@ -88,7 +83,7 @@ class MemoryAgent(BaseAgent):
                     "operation": "store",
                     "memory_id": item_id,
                     "memory_type": memory_type.value,
-                    "stored": True
+                    "success": True
                 }
 
             elif operation == 'retrieve':
@@ -104,7 +99,7 @@ class MemoryAgent(BaseAgent):
                 if item is None:
                     return AgentResult(
                         success=False,
-                        error=f"Memory not found: {memory_id}",
+                        error=f"Memory not found with ID: {memory_id}",
                         confidence=0.0
                     )
 
@@ -145,7 +140,8 @@ class MemoryAgent(BaseAgent):
                             "memory_id": item.id,
                             "content": str(item.content)[:200] + "..." if len(str(item.content)) > 200 else str(item.content),
                             "memory_type": item.memory_type.value,
-                            "importance": item.importance
+                            "importance": item.importance,
+                            "timestamp": item.timestamp.isoformat()
                         } for item in items
                     ],
                     "count": len(items)
@@ -189,7 +185,7 @@ class MemoryAgent(BaseAgent):
                 confidence=0.95,
                 metadata={
                     "operation": operation,
-                    "memory_type": memory_type.value if 'memory_type' in locals() else None,
+                    "memory_type": memory_type.value,
                     "processing_time": 0.5
                 }
             )

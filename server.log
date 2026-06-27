@@ -1,1 +1,12 @@
-Access is denied.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "D:\v4\src\api_server\__init__.py", line 5, in <module>
+    from .main import app
+  File "D:\v4\src\api_server\main.py", line 19, in <module>
+    from src.agent_framework.agent_manager import AgentManager
+  File "D:\v4\src\agent_framework\__init__.py", line 11, in <module>
+    from .memory_agent import MemoryAgent
+  File "D:\v4\src\agent_framework\memory_agent.py", line 14, in <module>
+    from memory_manager.memory_manager import MemoryManager
+ModuleNotFoundError: No module named 'memory_manager'
