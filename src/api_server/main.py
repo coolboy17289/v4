@@ -138,6 +138,7 @@ async def chat_endpoint(message: ChatMessage):
     Main chat endpoint that processes user messages
     """
     try:
+        logger.info("Entering chat endpoint try block")
         # Store the user message in memory
         user_memory_item = MemoryItem(
             content=message.message,
