@@ -94,57 +94,31 @@ INFO:src.agent_framework.agent_manager:Registered agent memory_agent of type mem
 INFO:src.agent_framework.agent_manager:Registered agent math_agent of type math
 INFO:src.agent_framework.agent_manager:Registered agent automation_agent of type automation
 ERROR:    Error loading ASGI app. Could not import module "main".
-O:watchfiles.main:1 change detected
-INFO:watchfiles.main:4 changes detected
+INFO:watchfiles.main:2 changes detected
+WARNING:  WatchFiles detected changes in 'api_server\main.py'. Reloading...
+ INFO:watchfiles.main:5 changes detected
 INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:19 changes detected
-INFO:watchfiles.main:35 changes detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
-INFO:watchfiles.main:1 change detected
+INFO:src.agent_framework.agent_manager:Registered agent research_agent of type research
+INFO:src.agent_framework.agent_manager:Registered agent coding_agent of type coding
+INFO:src.agent_framework.agent_manager:Registered agent planning_agent of type planning
+INFO:src.agent_framework.agent_manager:Registered agent file_agent of type file
+INFO:src.agent_framework.agent_manager:Registered agent browser_agent of type browser
+INFO:src.agent_framework.agent_manager:Registered agent vision_agent of type vision
+INFO:src.agent_framework.agent_manager:Registered agent memory_agent of type memory
+INFO:src.agent_framework.agent_manager:Registered agent math_agent of type math
+INFO:src.agent_framework.agent_manager:Registered agent automation_agent of type automation
+<frozen runpy>:128: RuntimeWarning: 'api_server.main' found in sys.modules after import of package 'api_server', but prior to execution of 'api_server.main'; this may result in unpredictable behaviour
+INFO:src.agent_framework.agent_manager:Registered agent research_agent of type research
+INFO:src.agent_framework.agent_manager:Registered agent coding_agent of type coding
+INFO:src.agent_framework.agent_manager:Registered agent planning_agent of type planning
+INFO:src.agent_framework.agent_manager:Registered agent file_agent of type file
+INFO:src.agent_framework.agent_manager:Registered agent browser_agent of type browser
+INFO:src.agent_framework.agent_manager:Registered agent vision_agent of type vision
+INFO:src.agent_framework.agent_manager:Registered agent memory_agent of type memory
+INFO:src.agent_framework.agent_manager:Registered agent math_agent of type math
+INFO:src.agent_framework.agent_manager:Registered agent automation_agent of type automation
+ERROR:    Error loading ASGI app. Could not import module "main".
+ain:1 change detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
@@ -467,6 +441,78 @@ INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:35 changes detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:3 changes detected
+WARNING:  WatchFiles detected changes in 'src\api_server\main.py'. Reloading...
+ INFO:watchfiles.main:6 changes detected
+INFO:watchfiles.main:2 changes detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:2 changes detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:14 changes detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:src.agent_framework.agent_manager:Registered agent research_agent of type research
+INFO:src.agent_framework.agent_manager:Registered agent coding_agent of type coding
+INFO:src.agent_framework.agent_manager:Registered agent planning_agent of type planning
+INFO:src.agent_framework.agent_manager:Registered agent file_agent of type file
+INFO:src.agent_framework.agent_manager:Registered agent browser_agent of type browser
+INFO:src.agent_framework.agent_manager:Registered agent vision_agent of type vision
+INFO:src.agent_framework.agent_manager:Registered agent memory_agent of type memory
+INFO:src.agent_framework.agent_manager:Registered agent math_agent of type math
+INFO:src.agent_framework.agent_manager:Registered agent automation_agent of type automation
+<frozen runpy>:128: RuntimeWarning: 'src.api_server.main' found in sys.modules after import of package 'src.api_server', but prior to execution of 'src.api_server.main'; this may result in unpredictable behaviour
+INFO:src.agent_framework.agent_manager:Registered agent research_agent of type research
+INFO:src.agent_framework.agent_manager:Registered agent coding_agent of type coding
+INFO:src.agent_framework.agent_manager:Registered agent planning_agent of type planning
+INFO:src.agent_framework.agent_manager:Registered agent file_agent of type file
+INFO:src.agent_framework.agent_manager:Registered agent browser_agent of type browser
+INFO:src.agent_framework.agent_manager:Registered agent vision_agent of type vision
+INFO:src.agent_framework.agent_manager:Registered agent memory_agent of type memory
+INFO:src.agent_framework.agent_manager:Registered agent math_agent of type math
+INFO:src.agent_framework.agent_manager:Registered agent automation_agent of type automation
+ERROR:    Error loading ASGI app. Could not import module "main".
+INFO:watchfiles.main:7 changes detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:1 change detected
+INFO:watchfiles.main:4 changes detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected
 INFO:watchfiles.main:1 change detected

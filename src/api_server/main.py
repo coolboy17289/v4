@@ -139,12 +139,12 @@ async def chat_endpoint(message: ChatMessage):
     """
     try:
         # Store the user message in memory
-        user_memory_item = {
-            "type": "user_message",
-            "content": message.message,
-            "session_id": message.session_id,
-            "timestamp": str(asyncio.get_event_loop().time())
-        }
+        user_memory_item = MemoryItem(
+            content=message.message,
+            memory_type=MemoryType.WORKING,
+            importance=0.5,
+            metadata={"message_type": "user_message", "session_id": message.session_id}
+        )
         memory_manager.add_memory(user_memory_item)
 
         # Determine what type of processing is needed
@@ -194,12 +194,12 @@ async def chat_endpoint(message: ChatMessage):
                 confidence = 0.1
 
         # Store the assistant's response in memory
-        assistant_memory_item = {
-            "type": "assistant_message",
-            "content": response_text,
-            "session_id": message.session_id,
-            "timestamp": str(asyncio.get_event_loop().time())
-        }
+        assistant_memory_item = MemoryItem(
+            content=response_text,
+            memory_type=MemoryType.WORKING,
+            importance=0.5,
+            metadata={"message_type": "assistant_message", "session_id": message.session_id}
+        )
         memory_manager.add_memory(assistant_memory_item)
 
         return ChatResponse(
