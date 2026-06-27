@@ -6,8 +6,8 @@ from typing import Dict, Any
 from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio
-from ..memory_manager.memory_manager import MemoryManager
-from ..memory_manager.memory_types import MemoryType
+from memory_manager.memory_manager import MemoryManager
+from memory_manager.memory_types import MemoryType, MemoryItem
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,6 @@ class MemoryAgent(BaseAgent):
                     )
 
                 # Create a memory item based on type
-                from ..memory_manager.memory_types import MemoryItem
                 item = MemoryItem(
                     content=content,
                     memory_type=memory_type,
