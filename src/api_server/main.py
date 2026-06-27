@@ -25,6 +25,7 @@ from src.agent_framework import (
 from src.memory_manager.memory_manager import MemoryManager
 from src.model_manager.model_router import ModelRouter, TaskType
 from src.memory_manager.memory_types import MemoryItem, MemoryType
+from src.chat_engine.chat_engine import ChatEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
