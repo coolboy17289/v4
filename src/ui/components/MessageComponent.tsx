@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Avatar } from './Avatar';
 
 interface MessageComponentProps {
   id: string;
@@ -21,24 +24,49 @@ export const MessageComponent = ({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const isUser = sender === 'user';
+  const avatarName = isUser ? 'You' : 'AI Assistant';
+  const avatarColor = isUser ? '#3b82f6' : '#10b981';
+
   return (
     <div
-      className={`flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`}
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
       onMouseEnter={() => setShowTime(true)}
       onMouseLeave={() => setShowTime(false)}
     >
-      <div
-        className={`max-w-[80%] rounded-lg px-4 py-2 ${
-          sender === 'user'
-            ? 'bg-blue-500 text-white ml-4'
-            : 'bg-gray-200 text-gray-800 mr-4'
-        } relative`}
-      >
-        <p className="whitespace-pre-wrap break-words">{text}</p>
-        {showTime && (
-          <span className="absolute bottom-0 right-0 text-xs text-gray-400 m-1">
-            {formatTime(timestamp)}
-          </span>
+      <div className={`flex items-end space-x-3 ${!isUser && 'order-first'}`}>
+        {!isUser && (
+          <Avatar name={avatarName} size={32} color={avatarColor} />
+        )}
+        <div className={`max-w-[80%] ${isUser ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-900'} rounded-lg p-3 relative`}>
+          <div className="flex justify-between mb-1">
+            <span className="font-medium">{avatarName}</span>
+            {showTime && (
+              <span className="text-xs text-opacity-60">
+                {formatTime(timestamp)}
+              </span>
+            )}
+          </div>
+          <ReactMarkdown
+            components={{
+              code: ({ inline, className, children, ...props }) => {
+                const match = /language-(\w+)/.exec(className || '');
+                return (
+                  <pre className={className} {...props}>
+                    <code className={match ? `language-${match[1]}` : ''}>
+                      {children}
+                    </code>
+                  </pre>
+                );
+              },
+            }}
+            plugins={[remarkGfm]}
+          >
+            {text}
+          </ReactMarkdown>
+        </div>
+        {isUser && (
+          <Avatar name={avatarName} size={32} color={avatarColor} />
         )}
       </div>
     </div>
