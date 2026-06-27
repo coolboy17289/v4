@@ -24,15 +24,15 @@ class MemoryType(Enum):
 @dataclass
 class MemoryItem:
     """Base class for items stored in memory"""
-    id: str
-    content: Any
-    memory_type: MemoryType
-    timestamp: datetime
+    id: Optional[str] = None
+    content: Any = None
+    memory_type: Optional[MemoryType] = None
+    timestamp: Optional[datetime] = None
     importance: float = 0.5  # 0.0 to 1.0
     access_count: int = 0
-    last_accessed: datetime = None
-    metadata: Dict[str, Any] = None
-    tags: List[str] = None
+    last_accessed: Optional[datetime] = None
+    metadata: Optional[Dict[str, Any]] = None
+    tags: Optional[List[str]] = None
 
     def __post_init__(self):
         if self.id is None:
