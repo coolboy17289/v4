@@ -85,7 +85,7 @@ class ToolOrchestrator:
                 "success": result.success,
                 "data": result.data,
                 "error": result.error,
-                "confidence":confidence: result.confidence
+                "confidence": result.confidence
             }
         except Exception as e:
             self.logger.error(f"Error using tool {tool_type.value}: {str(e)}")
