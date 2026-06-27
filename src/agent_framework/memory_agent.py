@@ -1,5 +1,5 @@
 """
-Memory Agent for memory operations and management
+Memory Agent for memory operations
 """
 
 from typing import Dict, Any
@@ -7,12 +7,11 @@ from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio
 
-# Import memory manager from memory_manager module
+# Import the memory manager from the memory_manager module
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from memory_manager.memory_manager import MemoryManager
-from memory_manager.memory_types import MemoryType
 
 logger = logging.getLogger(__name__)
 
@@ -29,72 +28,71 @@ class MemoryAgent(BaseAgent):
         Process a memory request
 
         Args:
-            input_data: Should contain 'action' key (store, retrieve, search, forget, etc.)
+            input_data: Should contain 'operation' key (store, retrieve, search, forget, etc.)
+                      and relevant parameters
 
         Returns:
             AgentResult: Result of the memory operation
         """
         try:
-            action = input_data.get('action', '').lower()
+            operation = input_data.get('operation', '').lower()
+            memory_type_str = input_data.get('memory_type', 'short_term').lower()
 
-            if not action:
+            # Map string to MemoryType enum
+            from memory_manager.memory_types import MemoryType
+            try:
+                memory_type = MemoryType(memory_type_str)
+            except ValueError:
+                memory_type = MemoryType.SHORT_TERM  # Default
+
+            if not operation:
                 return AgentResult(
                     success=False,
-                    error="Action is required",
+                    error="Operation is required",
                     confidence=0.0
                 )
 
-            self.logger.info(f"Performing memory action: {action}")
+            self.logger.info(f"Performing memory operation: {operation} on {memory_type.value}")
 
             # Simulate processing delay
             await asyncio.sleep(0.5)
 
-            if action == 'store':
+            if operation == 'store':
                 content = input_data.get('content')
-                memory_type_str = input_data.get('memory_type', 'short_term')
                 importance = float(input_data.get('importance', 0.5))
+                tags = input_data.get('tags', [])
 
                 if content is None:
                     return AgentResult(
                         success=False,
-                        error="Content is required for store action",
+                        error="Content is required for store operation",
                         confidence=0.0
                     )
 
-                # Convert string to MemoryType enum
-                try:
-                    memory_type = MemoryType[memory_type_str.upper()]
-                except KeyError:
-                    return AgentResult(
-                        success=False,
-                        error=f"Invalid memory type: {memory_type_str}",
-                        confidence=0.0
-                    )
-
-                # Create appropriate memory item (simplified)
+                # Create a memory item based on type
                 from memory_manager.memory_types import MemoryItem
                 item = MemoryItem(
-                    id="",  # Will be auto-generated
                     content=content,
                     memory_type=memory_type,
-                    importance=importance
+                    importance=importance,
+                    tags=tags
                 )
 
                 item_id = self.memory_manager.add_memory(item)
 
                 result = {
-                    "action": "store",
+                    "operation": "store",
                     "memory_id": item_id,
-                    "memory_type": memory_type_str,
-                    "stored": True
+                    "memory_type": memory_type.value,
+                    "success": True
                 }
 
-            elif action == 'retrieve':
+            elif operation == 'retrieve':
                 memory_id = input_data.get('memory_id')
                 if not memory_id:
                     return AgentResult(
                         success=False,
-                        error="Memory ID is required for retrieve action",
+                        error="Memory ID is required for retrieve operation",
                         confidence=0.0
                     )
 
@@ -102,80 +100,72 @@ class MemoryAgent(BaseAgent):
                 if item is None:
                     return AgentResult(
                         success=False,
-                        error=f"Memory not found: {memory_id}",
+                        error=f"Memory not found with ID: {memory_id}",
                         confidence=0.0
                     )
 
                 result = {
-                    "action": "retrieve",
+                    "operation": "retrieve",
                     "memory_id": memory_id,
                     "content": item.content,
                     "memory_type": item.memory_type.value,
                     "importance": item.importance,
-                    "timestamp": item.timestamp.isoformat()
+                    "timestamp": item.timestamp.isoformat(),
+                    "access_count": item.access_count
                 }
 
-            elif action == 'search':
+            elif operation == 'search':
                 query = input_data.get('query', '')
-                memory_types_str = input_data.get('memory_types', None)
                 limit = int(input_data.get('limit', 10))
 
-                memory_types = None
-                if memory_types_str:
-                    # Convert comma-separated string to list of MemoryType
-                    try:
-                        memory_types = [MemoryType[mt.strip().upper()] for mt in memory_types_str.split(',')]
-                    except KeyError as e:
-                        return AgentResult(
-                            success=False,
-                            error=f"Invalid memory type: {e}",
-                            confidence=0.0
-                        )
+                results = self.memory_manager.search_memories(query, [memory_type], limit)
 
-                items = self.memory_manager.search_memories(query, memory_types, limit)
+                result_items = []
+                for item in results:
+                    result_items.append({
+                        "memory_id": item.id,
+                        "content": str(item.content)[:200] + "..." if len(str(item.content)) > 200 else str(item.content),
+                        "memory_type": item.memory_type.value,
+                        "importance": item.importance,
+                        "timestamp": item.timestamp.isoformat()
+                    })
 
                 result = {
-                    "action": "search",
+                    "operation": "search",
                     "query": query,
-                    "results": [
-                        {
-                            "memory_id": item.id,
-                            "content": str(item.content)[:200] + "..." if len(str(item.content)) > 200 else str(item.content),
-                            "memory_type": item.memory_type.value,
-                            "importance": item.importance
-                        } for item in items
-                    ],
-                    "count": len(items)
+                    "results": result_items,
+                    "count": len(result_items)
                 }
 
-            elif action == 'forget':
+            elif operation == 'forget':
                 memory_id = input_data.get('memory_id')
                 if not memory_id:
                     return AgentResult(
                         success=False,
-                        error="Memory ID is required for forget action",
+                        error="Memory ID is required for forget operation",
                         confidence=0.0
                     )
 
                 # In a real implementation, we would remove the memory
-                # For now, we'll just simulate
+                # For now, we'll just simulate it
                 result = {
-                    "action": "forget",
+                    "operation": "forget",
                     "memory_id": memory_id,
-                    "forgotten": True
+                    "success": True,
+                    "message": f"Memory {memory_id} has been forgotten"
                 }
 
-            elif action == 'stats':
+            elif operation == 'stats':
                 stats = self.memory_manager.get_memory_stats()
                 result = {
-                    "action": "stats",
+                    "operation": "stats",
                     "statistics": stats
                 }
 
             else:
                 return AgentResult(
                     success=False,
-                    error=f"Unsupported action: {action}",
+                    error=f"Unsupported operation: {operation}",
                     confidence=0.0
                 )
 
@@ -184,7 +174,8 @@ class MemoryAgent(BaseAgent):
                 data=result,
                 confidence=0.95,
                 metadata={
-                    "action": action,
+                    "operation": operation,
+                    "memory_type": memory_type.value,
                     "processing_time": 0.5
                 }
             )
