@@ -46,6 +46,7 @@ app.add_middleware(
 agent_manager = AgentManager()
 memory_manager = MemoryManager()
 model_router = ModelRouter()
+chat_engine = ChatEngine(agent_manager, memory_manager)
 
 # Create and register agents
 agent_manager.register_agent(ResearchAgent("research_agent"))
@@ -135,86 +136,45 @@ async def health_check():
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(message: ChatMessage):
     """
-    Main chat endpoint that processes user messages
+    Main chat endpoint that processes user messages using the ChatEngine
     """
     print("ENTERING CHAT ENDPOINT")
     logger.info("About to enter try block")
     try:
         logger.info("Entering chat endpoint try block")
-        # Store the user message in memory
-        user_memory_item = MemoryItem(
-            content=message.message,
-            memory_type=MemoryType.WORKING,
-            importance=0.5,
-            metadata={"message_type": "user_message", "session_id": message.session_id}
+        # Process the message using the chat engine
+        result = await chat_engine.process_message(
+            user_id=message.session_id or "anonymous",
+            message=message.message,
+            conversation_id=None,  # Let chat engine create or find conversation
+            context=message.context,
+            reasoning_type="auto"  # Let the chat engine determine the best reasoning type
         )
-        logger.info(f"User memory item type: {type(user_memory_item)}")
-        memory_manager.add_memory(user_memory_item)
 
-        # Determine what type of processing is needed
-        # For now, we'll use a simple approach - in reality, this would be more sophisticated
-        # We'll start with the research agent for questions, coding agent for code requests
-
-        # Simple heuristic: if message contains code-related keywords, use coding agent
-        code_keywords = ["code", "function", "class", "variable", "program", "script", "debug", "fix"]
-        if any(keyword in message.message.lower() for keyword in code_keywords):
-            # Use coding agent
-            coding_request = {
-                "task": message.message,
-                "language": message.context.get("language", "python") if message.context else "python"
-            }
-
-            # Get available coding agent
-            coding_result = await agent_manager.route_task(AgentType.CODING, coding_request)
-
-            if coding_result.success:
-                response_text = coding_result.data.get("code", "I couldn't generate code for that request.")
-                explanation = coding_result.data.get("explanation", "")
-                confidence = coding_result.confidence
-            else:
-                response_text = f"I encountered an error while trying to help with coding: {coding_result.error}"
-                explanation = ""
-                confidence = 0.1
+        if result["success"]:
+            return ChatResponse(
+                response=result["response"],
+                session_id=message.session_id or "default",
+                confidence=result.get("confidence", 0.0),
+                sources=[],  # Sources would come from specific tool usage in a full implementation
+                metadata={
+                    "processing_type": "chat_engine",
+                    "conversation_id": result.get("conversation_id"),
+                    "reasoning_type": result.get("reasoning_type")
+                }
+            )
         else:
-            # Use research agent for general questions
-            research_request = {
-                "query": message.message
-            }
-
-            # Get available research agent
-            research_result = await agent_manager.route_task(AgentType.RESEARCH, research_request)
-
-            if research_result.success:
-                findings = research_result.data.get("findings", [])
-                summary = research_result.data.get("summary", "")
-                sources = research_result.data.get("sources", [])
-                response_text = f"{summary}\n\nKey findings:\n" + "\n".join([f"- {f}" for f in findings])
-                confidence = research_result.confidence
-            else:
-                response_text = f"I encountered an error while researching: {research_result.error}"
-                findings = []
-                summary = ""
-                sources = []
-                confidence = 0.1
-
-        # Store the assistant's response in memory
-        assistant_memory_item = MemoryItem(
-            content=response_text,
-            memory_type=MemoryType.WORKING,
-            importance=0.5,
-            metadata={"message_type": "assistant_message", "session_id": message.session_id}
-        )
-        logger.info(f"Assistant memory item type: {type(assistant_memory_item)}")
-        memory_manager.add_memory(assistant_memory_item)
-
-        return ChatResponse(
-            response=response_text,
-            session_id=message.session_id or "default",
-            confidence=confidence,
-            sources=[] if 'sources' not in locals() else sources,
-            metadata={"processing_type": "research" if 'research_result' in locals() else "coding"}
-        )
-
+            # Return error response
+            return ChatResponse(
+                response=result.get("response", "I encountered an error processing your request."),
+                session_id=message.session_id or "default",
+                confidence=0.1,
+                sources=[],
+                metadata={
+                    "processing_type": "error",
+                    "error": result.get("error", "Unknown error")
+                }
+            )
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
