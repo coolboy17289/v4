@@ -4,9 +4,7 @@ Agent Framework Package
 
 from .base_agent import BaseAgent, AgentType, AgentStatus, AgentResult
 from .agent_manager import AgentManager
-from .research_agent import ResearchAgent
-from .coding_agent import CodingAgent
-from .planning_agent import PlanningAgent
+from .research_agent import ResearchAgent, CodingAgent, PlanningAgent
 from .file_agent import FileAgent
 from .browser_agent import BrowserAgent
 from .vision_agent import VisionAgent

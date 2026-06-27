@@ -10,7 +10,11 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from agent_framework.agent_manager import AgentManager
-from agent_framework import ResearchAgent, CodingAgent, PlanningAgent, AgentType
+from agent_framework import (
+    ResearchAgent, CodingAgent, PlanningAgent, FileAgent,
+    BrowserAgent, VisionAgent, MemoryAgent, MathAgent, AutomationAgent,
+    AgentType
+)
 
 
 async def test_agent_framework():
@@ -20,15 +24,22 @@ async def test_agent_framework():
     # Create agent manager
     manager = AgentManager()
 
-    # Create agents
-    research_agent = ResearchAgent("research_001")
-    coding_agent = CodingAgent("coding_001")
-    planning_agent = PlanningAgent("planning_001")
+    # Create all agents
+    agents = [
+        ("research_001", ResearchAgent("research_001")),
+        ("coding_001", CodingAgent("coding_001")),
+        ("planning_001", PlanningAgent("planning_001")),
+        ("file_001", FileAgent("file_001")),
+        ("browser_001", BrowserAgent("browser_001")),
+        ("vision_001", VisionAgent("vision_001")),
+        ("memory_001", MemoryAgent("memory_001")),
+        ("math_001", MathAgent("math_001")),
+        ("automation_001", AutomationAgent("automation_001"))
+    ]
 
     # Register agents
-    manager.register_agent(research_agent)
-    manager.register_agent(coding_agent)
-    manager.register_agent(planning_agent)
+    for agent_id, agent in agents:
+        manager.register_agent(agent)
 
     print(f"Registered agents: {len(manager.get_agent_statuses())} types")
 
@@ -67,6 +78,78 @@ async def test_agent_framework():
         print(f"Planning successful: Generated {len(planning_result.data['plan_steps'])} step plan")
     else:
         print(f"Planning failed: {planning_result.error}")
+
+    # Test file agent
+    print("\nTesting File Agent...")
+    file_result = await manager.route_task(
+        agent_type=AgentType.FILE,
+        input_data={"operation": "read", "path": "/tmp/test.txt"}
+    )
+
+    if file_result.success:
+        print(f"File operation successful: {file_result.data.get('content', 'No content')[:50]}...")
+    else:
+        print(f"File operation failed: {file_result.error}")
+
+    # Test browser agent
+    print("\nTesting Browser Agent...")
+    browser_result = await manager.route_task(
+        agent_type=AgentType.BROWSER,
+        input_data={"action": "search", "query": "latest AI news"}
+    )
+
+    if browser_result.success:
+        print(f"Browser search successful: Found {browser_result.data.get('total_results', 0)} results")
+    else:
+        print(f"Browser search failed: {browser_result.error}")
+
+    # Test vision agent
+    print("\nTesting Vision Agent...")
+    vision_result = await manager.route_task(
+        agent_type=AgentType.VISION,
+        input_data={"action": "describe", "image_data": "fake_image_data"}
+    )
+
+    if vision_result.success:
+        print(f"Vision description successful: {vision_result.data.get('description', 'No description')}")
+    else:
+        print(f"Vision description failed: {vision_result.error}")
+
+    # Test memory agent
+    print("\nTesting Memory Agent...")
+    memory_result = await manager.route_task(
+        agent_type=AgentType.MEMORY,
+        input_data={"operation": "store", "content": "This is a test memory", "memory_type": "short_term"}
+    )
+
+    if memory_result.success:
+        print(f"Memory storage successful: Stored with ID {memory_result.data.get('memory_id')}")
+    else:
+        print(f"Memory storage failed: {memory_result.error}")
+
+    # Test math agent
+    print("\nTesting Math Agent...")
+    math_result = await manager.route_task(
+        agent_type=AgentType.MATH,
+        input_data={"problem": "What is the derivative of x^2?"}
+    )
+
+    if math_result.success:
+        print(f"Math solution successful: {math_result.data.get('result', 'No result')}")
+    else:
+        print(f"Math solution failed: {math_result.error}")
+
+    # Test automation agent
+    print("\nTesting Automation Agent...")
+    automation_result = await manager.route_task(
+        agent_type=AgentType.AUTOMATION,
+        input_data={"action": "click", "target": "submit_button"}
+    )
+
+    if automation_result.success:
+        print(f"Automation successful: {automation_result.data.get('message', 'No message')}")
+    else:
+        print(f"Automation failed: {automation_result.error}")
 
     print("\nAgent Framework test completed!")
 
