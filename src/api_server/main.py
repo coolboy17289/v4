@@ -145,6 +145,7 @@ async def chat_endpoint(message: ChatMessage):
             importance=0.5,
             metadata={"message_type": "user_message", "session_id": message.session_id}
         )
+        logger.info(f"User memory item type: {type(user_memory_item)}")
         memory_manager.add_memory(user_memory_item)
 
         # Determine what type of processing is needed
