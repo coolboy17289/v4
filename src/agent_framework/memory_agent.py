@@ -6,12 +6,13 @@ from typing import Dict, Any
 from .base_agent import BaseAgent, AgentType, AgentResult
 import logging
 import asyncio
-
-# Import the memory manager from the memory_manager module
 import sys
 import os
+
+# Import the memory manager from the memory_manager module
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from memory_manager.memory_manager import MemoryManager
+from memory_manager.memory_types import MemoryType
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +40,14 @@ class MemoryAgent(BaseAgent):
             memory_type_str = input_data.get('memory_type', 'short_term').lower()
 
             # Map string to MemoryType enum
-            from memory_manager.memory_types import MemoryType
             try:
-                memory_type = MemoryType(memory_type_str)
-            except ValueError:
-                memory_type = MemoryType.SHORT_TERM  # Default
+                memory_type = MemoryType[memory_type_str.upper()]
+            except KeyError:
+                return AgentResult(
+                    success=False,
+                    error=f"Invalid memory type: {memory_type_str}",
+                    confidence=0.0
+                )
 
             if not operation:
                 return AgentResult(
@@ -69,7 +73,7 @@ class MemoryAgent(BaseAgent):
                         confidence=0.0
                     )
 
-                # Create a memory item based on type
+                # Create appropriate memory item (simplified)
                 from memory_manager.memory_types import MemoryItem
                 item = MemoryItem(
                     content=content,
@@ -84,7 +88,7 @@ class MemoryAgent(BaseAgent):
                     "operation": "store",
                     "memory_id": item_id,
                     "memory_type": memory_type.value,
-                    "success": True
+                    "stored": True
                 }
 
             elif operation == 'retrieve':
@@ -100,7 +104,7 @@ class MemoryAgent(BaseAgent):
                 if item is None:
                     return AgentResult(
                         success=False,
-                        error=f"Memory not found with ID: {memory_id}",
+                        error=f"Memory not found: {memory_id}",
                         confidence=0.0
                     )
 
@@ -116,25 +120,35 @@ class MemoryAgent(BaseAgent):
 
             elif operation == 'search':
                 query = input_data.get('query', '')
+                memory_types_str = input_data.get('memory_types', None)
                 limit = int(input_data.get('limit', 10))
 
-                results = self.memory_manager.search_memories(query, [memory_type], limit)
+                memory_types = None
+                if memory_types_str:
+                    # Convert comma-separated string to list of MemoryType
+                    try:
+                        memory_types = [MemoryType[mt.strip().upper()] for mt in memory_types_str.split(',')]
+                    except KeyError as e:
+                        return AgentResult(
+                            success=False,
+                            error=f"Invalid memory type: {e}",
+                            confidence=0.0
+                        )
 
-                result_items = []
-                for item in results:
-                    result_items.append({
-                        "memory_id": item.id,
-                        "content": str(item.content)[:200] + "..." if len(str(item.content)) > 200 else str(item.content),
-                        "memory_type": item.memory_type.value,
-                        "importance": item.importance,
-                        "timestamp": item.timestamp.isoformat()
-                    })
+                items = self.memory_manager.search_memories(query, memory_types, limit)
 
                 result = {
                     "operation": "search",
                     "query": query,
-                    "results": result_items,
-                    "count": len(result_items)
+                    "results": [
+                        {
+                            "memory_id": item.id,
+                            "content": str(item.content)[:200] + "..." if len(str(item.content)) > 200 else str(item.content),
+                            "memory_type": item.memory_type.value,
+                            "importance": item.importance
+                        } for item in items
+                    ],
+                    "count": len(items)
                 }
 
             elif operation == 'forget':
@@ -175,7 +189,7 @@ class MemoryAgent(BaseAgent):
                 confidence=0.95,
                 metadata={
                     "operation": operation,
-                    "memory_type": memory_type.value,
+                    "memory_type": memory_type.value if 'memory_type' in locals() else None,
                     "processing_time": 0.5
                 }
             )
