@@ -137,6 +137,7 @@ async def chat_endpoint(message: ChatMessage):
     """
     Main chat endpoint that processes user messages
     """
+    print("ENTERING CHAT ENDPOINT")
     logger.info("About to enter try block")
     try:
         logger.info("Entering chat endpoint try block")
