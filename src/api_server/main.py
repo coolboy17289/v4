@@ -18,6 +18,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from src.agent_framework.agent_manager import AgentManager
 from src.agent_framework.base_agent import AgentType
+from src.agent_framework import (
+    ResearchAgent, CodingAgent, PlanningAgent, FileAgent,
+    BrowserAgent, VisionAgent, MemoryAgent, MathAgent, AutomationAgent
+)
 from src.memory_manager.memory_manager import MemoryManager
 from src.model_manager.model_router import ModelRouter, TaskType
 
@@ -41,6 +45,18 @@ app.add_middleware(
 agent_manager = AgentManager()
 memory_manager = MemoryManager()
 model_router = ModelRouter()
+
+# Create and register agents
+agent_manager.register_agent(ResearchAgent("research_agent"))
+agent_manager.register_agent(CodingAgent("coding_agent"))
+agent_manager.register_agent(PlanningAgent("planning_agent"))
+agent_manager.register_agent(FileAgent("file_agent"))
+agent_manager.register_agent(BrowserAgent("browser_agent"))
+agent_manager.register_agent(VisionAgent("vision_agent"))
+agent_manager.register_agent(MemoryAgent("memory_agent"))
+agent_manager.register_agent(MathAgent("math_agent"))
+agent_manager.register_agent(AutomationAgent("automation_agent"))
+
 
 # Pydantic models for request/response
 class ChatMessage(BaseModel):
